@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UniConnect - Login</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      background: url("https://images.unsplash.com/photo-1523240795612-9a054b0db644") no-repeat center center/cover;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+    }
+
+    .hero {
+      position: absolute;
+      top: 60px;
+      width: 100%;
+      text-align: center;
+      color: white;
+    }
+
+    .hero h1 {
+      font-family: 'Montserrat';
+      font-size: 60px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .box {
+      position: relative;
+      margin-right: 80px;
+      padding: 30px;
+      width: 320px;
+      border-radius: 15px;
+      backdrop-filter: blur(15px);
+      background: rgba(255,255,255,0.1);
+      color: white;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    #otpBox {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="hero">
+  <h1>UniConnect</h1>
+  <p>Connect with experts across universities</p>
+</div>
+
+<div class="box">
+  <input type="text" id="name" placeholder="Full Name">
+  <input type="email" id="email" placeholder="Email">
+  
+  <select id="university">
+    <option value="">Select University</option>
+    <option>LPU</option>
+    <option>Chandigarh University</option>
+    <option>Delhi University</option>
+  </select>
+
+  <input type="text" id="phone" placeholder="Mobile Number">
+
+  <button onclick="sendOTP()">Send OTP</button>
+
+  <div id="otpBox">
+    <input type="text" placeholder="Enter OTP">
+    <button onclick="login()">Verify & Login</button>
+  </div>
+</div>
+
+<!-- 🔥 NORMAL SCRIPT -->
+<script>
+function sendOTP() {
+  const phone = document.getElementById("phone").value;
+
+  if (!phone || phone.length < 10) {
+    alert("Enter valid phone number");
+    return;
+  }
+
+  alert("OTP sent (demo only)");
+  document.getElementById("otpBox").style.display = "block";
+}
+</script>
+
+<!-- 🔥 FIREBASE SCRIPT -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLq48sgaucUPrjNKwer7n9mNQlErN1ArA",
+  authDomain: "edu-table-a66a1.firebaseapp.com",
+  projectId: "edu-table-a66a1",
+  storageBucket: "edu-table-a66a1.firebasestorage.app",
+  messagingSenderId: "449265365903",
+  appId: "1:449265365903:web:c4d659b2127a13ab94d1fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.login = async function () {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const university = document.getElementById("university").value;
+  const phone = document.getElementById("phone").value;
+
+  if (!name || !email || !university || !phone) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const q = query(collection(db, "users"), where("email", "==", email));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    await addDoc(collection(db, "users"), {
+      name,
+      email,
+      university,
+      phone,
+      bio: ""
+    });
+  }
+
+  localStorage.setItem("email", email);
+  localStorage.setItem("user", name);
+  localStorage.setItem("university", university);
+
+  window.location.href = "dashboard.html";
+};
+</script>
+
+</body>
+</html>

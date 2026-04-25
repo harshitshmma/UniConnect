@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - UniConnect</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background-size: cover;
+      background-position: center;
+      color: white;
+    }
+
+    .overlay {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      padding: 40px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    /* PROFILE SECTION */
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .profile img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid white;
+      cursor: pointer;
+    }
+
+    .profile-info h1 {
+      font-size: 32px;
+      margin-bottom: 5px;
+    }
+
+    .profile-info p {
+      font-size: 16px;
+      color: #ddd;
+    }
+
+    /* BIO */
+    .bio {
+      margin-top: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      margin-top: 8px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      resize: none;
+      font-size: 14px;
+    }
+
+
+    /* OPTIONS SECTION */
+    .options-section {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .options-section h2 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+
+    .options-section p {
+      margin-bottom: 25px;
+      color: #ddd;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .card {
+      width: 100%;
+      padding: 20px;
+      font-size: 18px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      background: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+
+  <!-- PROFILE -->
+  <div class="profile">
+    <img id="profilePic" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" onclick="changePhoto()" />
+    
+    <div class="profile-info">
+      <h1 id="username"></h1>
+      <p id="university"></p>
+    </div>
+  </div>
+
+  <!-- BIO -->
+  <div class="bio">
+    <textarea id="bio" rows="3" placeholder="Write your bio..."></textarea>
+    <button onclick="saveBio()" style="
+  margin-top: 10px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #00c6ff;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+">
+  Save Bio
+</button>
+
+  </div>
+
+  <!-- OPTIONS -->
+  <div class="options-section">
+
+    <h2>Choose what you want</h2>
+    <p>Select the type of expert you want to connect with</p>
+
+    <div class="options">
+      <div class="card" onclick="selectType('Professional')">
+        Professional Expert
+      </div>
+
+      <div class="card" onclick="selectType('Practical')">
+        Practical Expert
+      </div>
+
+      <div class="card" onclick="selectType('Topic')">
+        Topic Expert
+      </div>
+    </div>
+
+    <p style="margin-top: 25px;">
+      Choose the profession you want to reach out to
+    </p>
+
+  </div>
+
+</div>
+
+<script>
+  const user = localStorage.getItem("user");
+  const university = localStorage.getItem("university");
+
+  document.getElementById("username").innerText = user || "User";
+  document.getElementById("university").innerText = university || "";
+
+  // Load saved bio
+  const savedBio = localStorage.getItem("bio");
+  if (savedBio) {
+    document.getElementById("bio").value = savedBio;
+  }
+
+  // Auto-save bio
+  document.getElementById("bio").addEventListener("input", () => {
+    localStorage.setItem("bio", document.getElementById("bio").value);
+  });
+
+  // Change profile picture
+  function changePhoto() {
+    const url = prompt("Enter image URL:");
+    if (url) {
+      document.getElementById("profilePic").src = url;
+      localStorage.setItem("profilePic", url);
+    }
+  }
+
+  // Load saved profile picture
+  const savedPic = localStorage.getItem("profilePic");
+  if (savedPic) {
+    document.getElementById("profilePic").src = savedPic;
+  }
+
+  // Select expert type
+function selectType(type) {
+  localStorage.setItem("selectedType", type);
+
+  if (type === "Professional") {
+    window.location.href = "experts.html";
+  } 
+  else if (type === "Topic") {
+    window.location.href = "topic.html";
+  } 
+  else if (type === "Practical") {
+    window.location.href = "practical.html";
+  }
+}
+
+  // Dynamic background
+  if (university === "LPU") {
+    document.body.style.backgroundImage = "url(https://www.lpu.in/lpu-assets/images/media-kit/LPU-campus.jpg)";
+  } 
+  else if (university === "Chandigarh University") {
+    document.body.style.backgroundImage = "url(https://scontent.fdel1-7.fna.fbcdn.net/v/t39.30808-6/487108898_1075176644646602_3936503630647508458_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=b895b5&_nc_ohc=PaXv609BKWsQ7kNvwEFPkdB&_nc_oc=AdrDw73ZtpXCdeRpt52wxumKBUM-dNG-Vw6QVRSKiy8h3nbfDDO65xyKQKfj2qG9s5Y&_nc_zt=23&_nc_ht=scontent.fdel1-7.fna&_nc_gid=VUz18tujUa5fY0y5g6gL9Q&oh=00_Af1epUUWzRvSRoopYGQabcbOJKJoA3yQK-IxREdWLcuAdQ&oe=69F14226)";
+  } 
+  else {
+    document.body.style.backgroundImage = "url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1')";
+  }
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLq48sgaucUPrjNKwer7n9mNQlErN1ArA",
+  authDomain: "edu-table-a66a1.firebaseapp.com",
+  projectId: "edu-table-a66a1",
+  storageBucket: "edu-table-a66a1.firebasestorage.app",
+  messagingSenderId: "449265365903",
+  appId: "1:449265365903:web:c4d659b2127a13ab94d1fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.saveBio = async function () {
+  const bio = document.getElementById("bio").value;
+  const email = localStorage.getItem("email");
+
+  console.log("EMAIL:", email);
+  console.log("BIO:", bio);
+
+  if (!bio) {
+    alert("Write something in bio");
+    return;
+  }
+
+  if (!email) {
+    alert("User not logged in properly ❌");
+    return;
+  }
+
+  const q = query(collection(db, "users"), where("email", "==", email));
+  const snapshot = await getDocs(q);
+
+  if (snapshot.empty) {
+    alert("User not found ❌");
+    return;
+  }
+
+  snapshot.forEach(async (docSnap) => {
+    await updateDoc(doc(db, "users", docSnap.id), {
+      bio: bio
+    });
+  });
+
+  alert("Bio saved successfully ✅");
+};
+</script>
+
+
+</body>
+</html>

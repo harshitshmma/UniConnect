@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Practical Experts - UniConnect</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: url("https://images.unsplash.com/photo-1581092921461-eab62e97a780") no-repeat center center/cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-bottom: 25px;
+      color: #ddd;
+    }
+
+    /* PRACTICAL CARDS */
+    .topics {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .topic-card {
+      padding: 12px 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: bold;
+    }
+
+    .topic-card:hover {
+      background: #00c6ff;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: #00c6ff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0096c7;
+    }
+
+    .results {
+      margin-top: 25px;
+      padding: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+
+  <h1>Find Practical Experts</h1>
+  <p>Search for hands-on skills and real-world guidance</p>
+
+  <!-- PRACTICAL OPTIONS -->
+  <div class="topics">
+    <div class="topic-card" onclick="quickSelect('Robotics')">Robotics</div>
+    <div class="topic-card" onclick="quickSelect('Arduino')">Arduino</div>
+    <div class="topic-card" onclick="quickSelect('Electronics')">Electronics</div>
+    <div class="topic-card" onclick="quickSelect('Web Projects')">Web Projects</div>
+  </div>
+
+  <!-- SEARCH -->
+  <input 
+    type="text" 
+    id="practicalInput" 
+    placeholder="Search for the practical expert you are looking for (e.g. ROS, Arduino, Robotics)"
+  />
+
+  <button onclick="searchPractical()">Search Practical Expert</button>
+
+  <!-- RESULT -->
+  <div class="results" id="resultsBox">
+    <p id="resultText"></p>
+  </div>
+
+</div>
+
+<script>
+  function quickSelect(topic) {
+    document.getElementById("practicalInput").value = topic;
+  }
+
+  function searchPractical() {
+    const skill = document.getElementById("practicalInput").value;
+
+    if (!skill) {
+      alert("Enter a skill");
+      return;
+    }
+
+    localStorage.setItem("practicalSearch", skill);
+
+    document.getElementById("resultsBox").style.display = "block";
+    document.getElementById("resultText").innerText =
+      "Searching for '" + skill + "' experts...\n\n(No data yet — will connect database soon)";
+  }
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLq48sgaucUPrjNKwer7n9mNQlErN1ArA",
+  authDomain: "edu-table-a66a1.firebaseapp.com",
+  projectId: "edu-table-a66a1",
+  storageBucket: "edu-table-a66a1.firebasestorage.app",
+  messagingSenderId: "449265365903",
+  appId: "1:449265365903:web:c4d659b2127a13ab94d1fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const resultBox = document.getElementById("result");
+
+window.searchExpert = async function () {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+
+  resultBox.innerHTML = "Searching...";
+
+  const snapshot = await getDocs(collection(db, "users"));
+
+  let found = false;
+  resultBox.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+
+    if (!data.bio) return;
+
+    if (data.bio.toLowerCase().includes(input)) {
+      found = true;
+
+      const div = document.createElement("div");
+      div.style.marginTop = "15px";
+      div.style.padding = "15px";
+      div.style.background = "rgba(255,255,255,0.1)";
+      div.style.borderRadius = "10px";
+
+      div.innerHTML = `
+        <h3>${data.name}</h3>
+        <p>${data.university}</p>
+        <p>${data.bio}</p>
+      `;
+
+      resultBox.appendChild(div);
+    }
+  });
+
+  if (!found) {
+    resultBox.innerHTML = "No experts found 😢";
+  }
+};
+</script>
+
+</body>
+</html>
