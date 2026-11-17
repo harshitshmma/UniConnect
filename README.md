@@ -39,7 +39,7 @@ What is a demo or not finished:
 
 1. Download or clone this repository.
 2. Open `index.html` in a browser, or serve the folder with any static server.
-3. The app uses the author's Firebase project. To use your own, replace the `firebaseConfig` object in `index.html`, `experts.html` and `practical.html`, and create a Firestore database.
+3. The app uses the author's Firebase project. To use your own, replace the `firebaseConfig` object in `index.html`, `dashboard.html`, `experts.html` and `practical.html`, and create a Firestore database.
 
 ## Planned next steps
 
